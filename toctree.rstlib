@@ -1,0 +1,15 @@
+Sample Cases
+------------
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Sample Cases
+
+   MiV-Simulator-Cases/1-construction/constructing_a_network_model
+   MiV-Simulator-Cases/2-single-compartment/single_compartment
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Configuration
+
+   MiV-Simulator-Cases/1-construction/configuration_description

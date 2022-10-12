@@ -12,7 +12,8 @@ Parametric Surface:
     SR:  [[0.0,0.0,150.0], [1000.0,1000.0,350.0]]
     SLM: [[0.0, 0.0,350.0], [1000.0, 1000.0, 450.0]]
   Rotation: [0.0, 0.0, 0.0]
-Cell Constraints:
+# Range of 
+Cell Constraints: # Constraint in Z-Height
   PC:
     SP: [100., 120.] # Lee, ..., Soltesz. Neuron 2014
   PVBC:

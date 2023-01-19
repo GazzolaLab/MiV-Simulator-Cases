@@ -12,68 +12,81 @@ get("mpi").as_default()
 network = get(
     "miv_simulator.interface.make_network",
     "~microcircuit",
-)
-network.launch()
+).launch()
+
+print("Obtaining synapse forests")
+
+synapse_forest = {
+    population: network.synapse_forest(
+        {
+            "population": population,
+            "morphology": f"../1-construction/datasets/{population}.swc",
+        }
+    ).launch()
+    for population in ["PYR", "PVBC", "OLM"]
+}
 
 print("Obtaining soma coordinates and measuring distances")
 
-coordinates = network.soma_coordinates()
-coordinates.launch()
+coordinates = network.soma_coordinates().launch()
 
-measure_distances = coordinates.measure_distances()
-measure_distances.launch()
+measure_distances = coordinates.measure_distances().launch()
 
 print("Obtaining distributed synapses along dendritic trees")
-synapses = []
-for population in ["PYR", "PVBC", "OLM"]:
-    synapses.append(
-        coordinates.distribute_synapses(
-            {
-                "population": population,
-                "forest": network.synapse_forest(population),
-                "distribution": "poisson",
-                "io_size": 1,
-                "write_size": 0,
-                "templates": "../1-construction/templates",
-            }
-        )
+
+synapses = {
+    population: coordinates.distribute_synapses(
+        {
+            "population": population,
+            "forest": synapse_forest[population].output_filepath,
+            "distribution": "poisson",
+            "io_size": 1,
+            "write_size": 0,
+            "templates": "../1-construction/templates",
+        }
     )
-    synapses[-1].launch()
+    for population in ["PYR", "PVBC", "OLM"]
+}
 
 print("Obtaining connections")
-distance_connections = []
-for population in ["PYR", "PVBC", "OLM"]:
-    distance_connections.append(
-        coordinates.distance_connections(
-            {
-                "forest": network.synapse_forest(population),
-                "connectivity_namespace": "Connections",
-                "coordinates_namespace": "Generated Coordinates",
-                "io_size": 1,
-                "cache_size": 20,
-                "write_size": 100,
-            }
-        )
+
+distance_connections = {
+    population: coordinates.distance_connections(
+        {
+            "forest": synapse_forest[population].output_filepath,
+            "connectivity_namespace": "Connections",
+            "coordinates_namespace": "Generated Coordinates",
+            "io_size": 1,
+            "cache_size": 20,
+            "write_size": 100,
+        }
     )
-    distance_connections[-1].launch()
+    for population in ["PYR", "PVBC", "OLM"]
+}
 
 print("Obtaining input features")
 
-input_features = coordinates.input_features({"populations": ("STIM",)})
-input_features.launch()
+input_features = coordinates.input_features({"populations": ("STIM",)}).launch()
 
 print("Obtaining spike trains")
 
-inputs = input_features.derive_spike_trains({"populations": ("STIM",), "n_trials": 3})
-inputs.launch()
+inputs = input_features.derive_spike_trains(
+    {"populations": ("STIM",), "n_trials": 3}
+).launch()
 
 print("Prepare the data")
 
 data = get(
     "miv_simulator.interface.prepare_data",
-    uses=[network, coordinates, *synapses, *distance_connections, inputs],
-)
-data.launch()
+    uses=[
+        network,
+        coordinates,
+        *synapse_forest.values(),
+        *synapses.values(),
+        *distance_connections.values(),
+        inputs,
+    ],
+).launch()
 
 print("Run the simulator")
 

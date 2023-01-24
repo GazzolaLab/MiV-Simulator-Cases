@@ -43,6 +43,7 @@ synapses = {
             "io_size": 1,
             "write_size": 0,
             "templates": "../1-construction/templates",
+            "mechanisms": "../1-construction/mechanisms",
         }
     )
     for population in ["PYR", "PVBC", "OLM"]
@@ -96,6 +97,7 @@ simulation = get(
         "spike_input_path": inputs.output_filepath,
         "cells": data.output_filepath("cells"),
         "connections": data.output_filepath("connections"),
+        "mechanisms": "../1-construction/mechanisms",
     },
 )
 

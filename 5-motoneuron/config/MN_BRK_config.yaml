@@ -1,0 +1,26 @@
+BoothRinzelKiehn:
+  global_diam:  5.0
+  global_cm:  2.0
+  e_pas: -62
+  pp: 0.1
+  Ltotal: 120.0
+  gc: 0.4185837
+  soma_gmax_Na: 0.2742448
+  soma_gmax_K: 0.23978254
+  soma_gmax_KCa: 0.009327445
+  soma_gmax_CaN: 0.0077317934
+  soma_g_pas: 0.00036572208
+  dend_gmax_CaL: 1.0e-05
+  dend_gmax_CaN: 0.0006061684
+  dend_gmax_KCa: 0.005
+  dend_g_pas: 1.0e-05
+  cm_ratio: 3.3894134
+  soma_f_Caconc: 0.004
+  soma_alpha_Caconc: 1
+  soma_kCa_Caconc: 8
+  dend_f_Caconc: 0.004
+  dend_alpha_Caconc: 1
+  dend_kCa_Caconc: 8
+  ic_constant: -0.03171835
+  V_threshold: -37.0
+  V_rest: -57.4

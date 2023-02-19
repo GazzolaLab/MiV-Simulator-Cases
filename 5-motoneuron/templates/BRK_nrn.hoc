@@ -1,5 +1,5 @@
-// 
-begintemplate MN_nrn
+// Booth-Rinzel-Kiehn two-compartmental motoneuron
+begintemplate BRK_nrn
 
    public soma, dend, sections, all
    create soma, dend
@@ -270,4 +270,4 @@ proc biophys () {
 
   }
 
-endtemplate MN_nrn
+endtemplate BRK_nrn

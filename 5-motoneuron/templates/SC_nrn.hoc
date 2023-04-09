@@ -2,8 +2,7 @@
 begintemplate SC_nrn
 
    public soma, sections, all
-   public xx, yy, zz   
-   
+   public xx, yy, zz
    create soma
    objref sections, all
    func is_art() {return 0}

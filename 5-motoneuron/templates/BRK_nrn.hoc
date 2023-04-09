@@ -1,5 +1,5 @@
-
-begintemplate PR_nrn
+// Booth-Rinzel-Kiehn two-compartmental motoneuron
+begintemplate BRK_nrn
 
    public soma, dend, sections, all
    public xx, yy, zz
@@ -31,9 +31,11 @@ begintemplate PR_nrn
    }
    
    proc init() {
+       
        xx = 0
        yy = 0
        zz = 0
+       
        if (numarg() > 1) {
            parameters($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
        } else if (numarg() > 0) {
@@ -49,10 +51,6 @@ begintemplate PR_nrn
        soma { sections.append() all.append() }
        dend { sections.append() all.append() }
      }
-//
-// SPEC: Geometry for a simple 2 compartment neuron.
-//       from Pinsky and Rinzel, JCompNeuro, 1994
-// 
 
 proc parameters() {
     if (numarg() > 0) {
@@ -64,16 +62,26 @@ proc parameters() {
 	global_cm = $4 
 	global_diam = $5
         
+        global_e_pas = -60
         soma_g_pas=$6
         soma_gmax_Na = $7
         soma_gmax_K = $8
+        soma_gmax_KCa = $9
+        soma_gmax_CaN = $10
         
-        dend_g_pas = $9
-        dend_gmax_Ca = $10
-        dend_gmax_KCa = $11
-        dend_gmax_KAHP = $12
+        soma_f_Caconc = $11
+        soma_alpha_Caconc = $12
+        soma_kCa_Caconc = $13
         
-        dend_d_Caconc = $13
+        dend_g_pas = $14
+        dend_gmax_Ca = $15
+        dend_gmax_CaN = $16
+        dend_gmax_CaL = $17
+        dend_gmax_KCa = $18
+        
+        dend_f_Caconc = $19
+        dend_alpha_Caconc = $20
+        dend_kCa_Caconc = $21
         
     } else {
         
@@ -81,16 +89,25 @@ proc parameters() {
         Ltotal = 400/PI // total length of compartments
         gc=10.5 // mS/cm2; Ra in ohm-cm
         
+        global_e_pas = -60
         soma_g_pas=0.0001
         soma_gmax_Na = 00030e-3
-        soma_gmax_K = 00015e-3
+        soma_gmax_K = 00010e-3
+        soma_gmax_KCa = 0005e-3
+        soma_gmax_CaN = 00010e-3
+        
+        soma_f_Caconc = 0.004
+        soma_alpha_Caconc = 1
+        soma_kCa_Caconc = 8
         
         dend_g_pas=0.0001
-        dend_gmax_Ca = 00010e-3
+        dend_gmax_CaN = 00010e-3
+        dend_gmax_CaL = 00010e-3
         dend_gmax_KCa = 00015e-3
-        dend_gmax_KAHP = 0000.8e-3
         
-        dend_d_Caconc = 13
+        dend_f_Caconc = 0.004
+        dend_alpha_Caconc = 1
+        dend_kCa_Caconc = 8
         
 	cm = 3
     }
@@ -109,15 +126,25 @@ proc parameters_from_python() { localobj param_dict
     global_cm = param_dict.__getitem__("global_cm")
     cm_ratio = param_dict.get("cm_ratio", 1.)
     
-    soma_g_pas= param_dict.__getitem__("soma_g_pas")
+    global_e_pas = param_dict.get("e_pas", -60)
+    soma_g_pas = param_dict.__getitem__("soma_g_pas")
     soma_gmax_Na = param_dict.__getitem__("soma_gmax_Na")
     soma_gmax_K = param_dict.__getitem__("soma_gmax_K")
+    soma_gmax_KCa = param_dict.__getitem__("soma_gmax_KCa")
+    soma_gmax_CaN = param_dict.__getitem__("soma_gmax_CaN")
+    
+    soma_f_Caconc = param_dict.__getitem__("soma_f_Caconc")
+    soma_alpha_Caconc = param_dict.__getitem__("soma_alpha_Caconc")
+    soma_kCa_Caconc = param_dict.__getitem__("soma_kCa_Caconc")
     
     dend_g_pas = param_dict.__getitem__("dend_g_pas")
-    dend_gmax_Ca = param_dict.__getitem__("dend_gmax_Ca")
+    dend_gmax_CaN = param_dict.__getitem__("dend_gmax_CaN")
+    dend_gmax_CaL = param_dict.__getitem__("dend_gmax_CaL")
     dend_gmax_KCa = param_dict.__getitem__("dend_gmax_KCa")
-    dend_gmax_KAHP = param_dict.__getitem__("dend_gmax_KAHP")
-    dend_d_Caconc = param_dict.__getitem__("dend_d_Caconc")
+    
+    dend_f_Caconc = param_dict.__getitem__("dend_f_Caconc")
+    dend_alpha_Caconc = param_dict.__getitem__("dend_alpha_Caconc")
+    dend_kCa_Caconc = param_dict.__getitem__("dend_kCa_Caconc")
     
 }
 
@@ -192,7 +219,7 @@ proc init_ic() {
       finitialize(v_init)
       
       forsec "soma" {
-          ic_constant = -(ina + ik + i_pas)
+          ic_constant = -(ina + ik + ica + i_pas)
       }
       
   }
@@ -202,10 +229,9 @@ proc biophys () {
     //* Electrical parameters
     
     forall Ra=1
-    // adjust Ra to get the desired longitudinal resistance
-    global_Ra = (1e-6/(gc/pp * (area(0.5)*1e-8) * 1e-3))/(2*ri(0.5))
     
-    forall { Ra=global_Ra  cm=global_cm }
+    // adjust Ra to get the desired longitudinal resistance
+    forall { Ra=(1e-6/(gc/pp * (area(0.5)*1e-8) * 1e-3))/(2*ri(0.5)) cm=global_cm }
     
     
     forsec "soma" {
@@ -214,36 +240,51 @@ proc biophys () {
         
         insert pas
         insert constant
-        insert Na_PR
-        insert K_PR
-        insert Na_conc_PR
-        insert K_conc_PR
+        insert Na_conc
+        insert K_conc
+	insert Ca_conc
+	insert Kdr
+        insert Nas
+	insert CaN
+	insert KCa
+
+        gmax_Nas = soma_gmax_Na
+        gmax_Kdr = soma_gmax_K
+        gmax_CaN = soma_gmax_CaN
+        gmax_KCa = soma_gmax_KCa
         
-        gmax_Na_PR = soma_gmax_Na
-        gmax_K_PR = soma_gmax_K
+        f_Ca_conc = soma_f_Caconc
+        alpha_Ca_conc = soma_alpha_Caconc
+        kCa_Ca_conc = soma_kCa_Caconc
+        
         g_pas = soma_g_pas
-        e_pas = -60.
+        e_pas = global_e_pas
       }
 
     //* dend
     forsec "dend" {
-        insert pas
-        insert Ca_PR
-        insert KAHP_PR
-        insert KCa_PR
-        insert Ca_conc_PR
-        insert K_conc_PR
         
-        d_Caconc_PR = dend_d_Caconc
+        insert pas
+        insert CaN
+        insert CaL
+        insert KCa
+        insert Ca_conc
+        insert K_conc
+        
+        f_Ca_conc = dend_f_Caconc
+        alpha_Ca_conc = dend_alpha_Caconc
+        kCa_Ca_conc = dend_kCa_Caconc
+        
         g_pas=dend_g_pas
-        e_pas=-60.
-        gmax_Ca_PR = dend_gmax_Ca
-        gmax_KCa_PR = dend_gmax_KCa
-        gmax_KAHP_PR = dend_gmax_KAHP
+        e_pas=global_e_pas
+        
+        gmax_CaN = dend_gmax_CaN
+        gmax_CaL = dend_gmax_CaL
+        gmax_KCa = dend_gmax_KCa
 
     }
     
 
   }
 
-endtemplate PR_nrn
+endtemplate BRK_nrn

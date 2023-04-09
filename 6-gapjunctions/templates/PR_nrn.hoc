@@ -2,7 +2,6 @@
 begintemplate PR_nrn
 
    public soma, dend, sections, all
-   public xx, yy, zz
    create soma, dend
    public pp, gc, Ltotal
    public init_ic
@@ -31,9 +30,6 @@ begintemplate PR_nrn
    }
    
    proc init() {
-       xx = 0
-       yy = 0
-       zz = 0
        if (numarg() > 1) {
            parameters($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
        } else if (numarg() > 0) {
@@ -119,17 +115,6 @@ proc parameters_from_python() { localobj param_dict
     dend_gmax_KAHP = param_dict.__getitem__("dend_gmax_KAHP")
     dend_d_Caconc = param_dict.__getitem__("dend_d_Caconc")
     
-}
-
-
-proc position() { local i
-    
-    forsec all {
-        for i = 0, n3d()-1 {
-            pt3dchange(i, $1-xx+x3d(i), $2-yy+y3d(i), $3-zz+z3d(i), diam3d(i))
-        }
-    }
-    xx = $1  yy = $2  zz = $3
 }
 
 

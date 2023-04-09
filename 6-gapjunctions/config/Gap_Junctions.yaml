@@ -1,0 +1,18 @@
+Locations:
+    PYR:
+      PYR: [apical, basal]
+Connection Probabilities:
+    PYR:
+      PYR: 0.25
+## Distance-dependent connection weights,
+## based on Fig. 1C from Otsuka 2013
+Connection Weights: { 0: 1.0, 25: 0.429, 75: 0.405, 125: 0.345, 175: 0.08 }
+Connection Parameters: [0.4201,-0.0019,150.7465,0.0255]
+Coupling Coefficients:
+    PYR:
+      PYR: 0.1
+## Distance-dependent coupling coefficient weights,
+## Based on Fig. 6B from Amitai 2002
+Coupling Weights: { 0: 1.0, 25: 0.5, 75: 0.375, 125: 0.1875, 175: 0.1875 }
+Coupling Parameters: [0.0002,-0.0658,7.3211]
+    

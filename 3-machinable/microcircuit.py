@@ -2,8 +2,8 @@
 from machinable import get
 
 with get("interface.execution.local"):
-    neuralh5 = get(
-        "miv_simulator.interface.create_h5",
+    h5_types = get(
+        "miv_simulator.interface.h5_types",
         {
             "cell_distributions": {  # "from_file('simulation/config/cell_distributions.yml')",  # {
                 "STIM": {"SO": 0, "SP": 10, "SR": 0, "SLM": 0},
@@ -15,21 +15,24 @@ with get("interface.execution.local"):
         },
     ).launch()
 
-    print("Obtain network")
+    print("Obtain network architecture")
 
     network = get(
-        "miv_simulator.interface.create_network",
+        "miv_simulator.interface.network_architecture",
         {
-            "filepath": neuralh5.output_filepath,
-            "cell_distributions": neuralh5.config.cell_distributions,
-            "synapses": neuralh5.config.synapses,
+            "filepath": h5_types.output_filepath,
+            "cell_distributions": h5_types.config.cell_distributions,
+            "synapses": h5_types.config.synapses,
             "layer_extents": {  # }"from_file('simulation/config/layer_extents.yml')",  # {
                 "SO": [[0.0, 0.0, 0.0], [1000.0, 1000.0, 100.0]],
                 "SP": [[0.0, 0.0, 100.0], [1000.0, 1000.0, 150.0]],
                 "SR": [[0.0, 0.0, 150.0], [1000.0, 1000.0, 350.0]],
                 "SLM": [[0.0, 0.0, 350.0], [1000.0, 1000.0, 450.0]],
             },
-            "cell_constraints": {"PC": {"SP": [100, 120]}, "PVBC": {"SR": [150, 200]}},
+            "cell_constraints": {
+                "PC": {"SP": [100, 120]},
+                "PVBC": {"SR": [150, 200]},
+            },
         },
     ).launch()
 
@@ -40,7 +43,7 @@ with get("interface.execution.local"):
     print("Obtaining synapse forests")
 
     synapse_forest = {
-        population: network.synapse_forest(
+        population: network.generate_synapse_forest(
             {
                 "population": population,
                 "morphology": f"./simulation/morphology/{population}.swc",
@@ -50,7 +53,6 @@ with get("interface.execution.local"):
     }
 
     print("Obtaining distributed synapses along dendritic trees")
-
     synapses = {
         population: network.distribute_synapses(
             {
@@ -69,8 +71,8 @@ with get("interface.execution.local"):
 
     print("Obtaining connections")
 
-    distance_connections = {
-        population: network.distance_connections(
+    connections = {
+        population: network.generate_connections(
             {
                 "forest_filepath": synapses[population].output_filepath,
                 "axon_extents": "from_file('simulation/config/axon_extents.yml')",
@@ -112,7 +114,7 @@ with get("interface.execution.local"):
             network,
             *synapse_forest.values(),
             *synapses.values(),
-            *distance_connections.values(),
+            *connections.values(),
             inputs,
         ],
     ).launch()
@@ -137,4 +139,4 @@ with get("interface.execution.local"):
 
     simulation.launch()
 
-    print("Results are stored at ", simulation.local_directory())
+    print("Results located at ", simulation.local_directory())

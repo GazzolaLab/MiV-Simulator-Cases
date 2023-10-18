@@ -1,5 +1,5 @@
+#!/usr/bin/env python
 from machinable import get, Element
-
 
 with get("interface.execution.local"):
     h5_types = get(
@@ -14,6 +14,9 @@ with get("interface.execution.local"):
             "synapses": "from_file('simulation/config/synapses.yml')",
         },
     ).launch()
+    print(h5_types.local_directory())
+
+    print("Obtain network architecture")
 
     network = get(
         "miv_simulator.interface.network_architecture",
@@ -34,7 +37,11 @@ with get("interface.execution.local"):
         },
     ).launch()
 
+    print("Obtaining soma coordinates and measuring distances")
+
     measure_distances = network.measure_distances().launch()
+
+    print("Obtaining synapse forests")
 
     synapse_forest = {
         population: network.generate_synapse_forest(
@@ -46,6 +53,7 @@ with get("interface.execution.local"):
         for population in ["PYR", "PVBC", "OLM"]
     }
 
+    print("Obtaining distributed synapses along dendritic trees")
     synapses = {
         population: network.distribute_synapses(
             {
@@ -62,6 +70,8 @@ with get("interface.execution.local"):
         for population in ["PYR", "PVBC", "OLM"]
     }
 
+    print("Obtaining connections")
+
     connections = {
         population: network.generate_connections(
             {
@@ -76,23 +86,66 @@ with get("interface.execution.local"):
         for population in ["PYR", "PVBC", "OLM"]
     }
 
-    neuroh5_graph = get(
-        "miv_simulator.interface.neuroh5_graph",
+    input_features = get(
+        "miv_simulator.interface.legacy.input_features",
+        [
+            {
+                "config_filepath": "simulation/config/legacy/default.yaml",
+                "coordinates": network.config.filepath,
+                "populations": ("STIM",),
+            }
+        ],
+        uses=network,
+    ).launch()
+
+    print("Obtaining spike trains")
+
+    inputs = input_features.derive_spike_trains(
+        {"populations": ("STIM",), "n_trials": 3}
+    ).launch()
+
+    # print("Adding custom spike data")
+    # inputs.from_numpy({gid: np.random.randint(20) for gid in range(1000)})
+
+    print("Prepare the data")
+
+    data = get(
+        "miv_simulator.interface.legacy.prepare_data",
         uses=[
             network,
             *synapse_forest.values(),
             *synapses.values(),
             *connections.values(),
+            inputs,
         ],
     ).launch()
 
+    print("Run the simulator")
+
     simulation = Element.make(
-        "interface.experiment.rc",
-        [
-            neuroh5_graph.files(),
-            {
-                "cell_types": "from_file('simulation/config/cell_types.yml')",
-                "synapses": "from_file('simulation/config/synapses.yml')",
-            },
-        ],
-    ).launch()
+        "miv_simulator.interface.legacy.run",
+        {
+            "config_filepath": "simulation/config/legacy/default.yaml",
+            "spike_input_path": inputs.output_filepath,
+            "cells": data.output_filepath("cells"),
+            "connections": data.output_filepath("connections"),
+            "templates": "./simulation/templates",
+            "mechanisms": "./simulation/mechanisms",
+            "spike_input_namespace": inputs.active_spike_input_namespace,
+            "spike_input_attr": inputs.active_spike_input_attr,
+            "ranks_": 1,
+        },
+        uses=[inputs, data],
+    )
+
+    simulation.launch()
+
+    print("Results located at ", simulation.local_directory())
+
+    print(
+        {
+            "cells": data.output_filepath("cells"),
+            "connections": data.output_filepath("connections"),
+        }
+    )
+    exit()

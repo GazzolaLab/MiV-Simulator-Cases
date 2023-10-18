@@ -1,7 +1,7 @@
 from machinable import Component
 import numpy as np
 from pydantic import Field, BaseModel
-from miv_simulator.simulator import runtime, configure_hoc
+from miv_simulator import simulator
 from mpi4py import MPI
 import sys
 from miv_simulator import config
@@ -43,8 +43,8 @@ class Reservoir(Component):
         logging.basicConfig(level=logging.INFO)
         np.seterr(all="raise")
 
-        h = configure_hoc(mechanisms_directory=self.config.mechanisms)
-        env = runtime.Env(seed=self.seed)
+        h = simulator.configure_hoc(mechanisms_directory=self.config.mechanisms)
+        env = simulator.ExecutionEnvironment(seed=self.seed)
 
         env.load_cells(
             filepath=self.config.cells,

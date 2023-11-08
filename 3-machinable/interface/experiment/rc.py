@@ -2,15 +2,17 @@ from machinable import Component
 import numpy as np
 from pydantic import Field, BaseModel
 from miv_simulator import simulator
+from miv_simulator.lfp import LFP
 from mpi4py import MPI
+from typing import List
 import sys
 from miv_simulator import config
 from miv_simulator.utils import from_yaml
-from typing import Dict
+from typing import Dict, Optional, Union
 import logging
-from miv_simulator.lfp import LFP
+
 from machinable.config import to_dict
-from miv_simulator.coding import cast_spike_times
+from machinable.utils import load_file
 
 
 def mpi_excepthook(type, value, traceback):
@@ -27,14 +29,20 @@ sys.excepthook = mpi_excepthook
 
 class Reservoir(Component):
     class Config(BaseModel):
+        stimulus: Optional[Union[str, List[float]]] = None
+        t_end: float = 1000
         cells: str = Field("???")
         connections: str = Field("???")
         cell_types: config.CellTypes = Field("???")
         synapses: config.Synapses = Field("???")
         templates: str = "./simulation/templates"
         mechanisms: str = "./simulation/mechanisms"
-        ranks_: int = 8
-        nodes_: int = 1
+        ranks: int = 8
+
+    def on_write_meta_data(self):
+        comm = MPI.COMM_WORLD
+        rank = comm.Get_rank()
+        return rank == 0
 
     def config_from_file(self, filename: str) -> Dict:
         return from_yaml(filename)
@@ -45,6 +53,10 @@ class Reservoir(Component):
 
         h = simulator.configure_hoc(mechanisms_directory=self.config.mechanisms)
         env = simulator.ExecutionEnvironment(seed=self.seed)
+
+        def log(m):
+            if env.rank == 0:
+                print(m)
 
         env.load_cells(
             filepath=self.config.cells,
@@ -75,6 +87,19 @@ class Reservoir(Component):
             seed=self.seed + 1,
         )
 
+        if self.config.stimulus:
+            log("Creating stimulus")
+            stimulus = self.config.stimulus
+            if isinstance(stimulus, str):
+                stimulus = load_file(self.config.stimulus)
+
+            for gid, cell in env.artificial_cells["STIM"].items():
+                if not (env.pc.gid_exists(gid)):
+                    continue
+                spike_train = np.array(stimulus)[int(gid) :: 10]
+                print(f"{env.rank}: Stimulating with spike train {spike_train}")
+                cell.play(h.Vector(spike_train))
+
         h.v_init = -65
         h.stdinit()
         h.secondorder = 2  # crank-nicholson
@@ -83,22 +108,15 @@ class Reservoir(Component):
 
         h.finitialize(h.v_init)
 
-        env.pc.psolve(0.0)
-        for step in range(30):
-            if env.rank == 0 and step % 10 == 0:
-                print(f"Step {step} at t={h.t}")
+        log("Finished initialization, starting the simulation")
 
-            # random stimulation
-            for gid, cell in env.artificial_cells["STIM"].items():
-                if not (env.pc.gid_exists(gid)):
-                    continue
+        env.pc.psolve(self.config.t_end)
 
-                uniform_spike_train = cast_spike_times(
-                    h.t + 1000 * np.random.uniform(size=10)
-                )
-                cell.play(h.Vector(uniform_spike_train))
-
-            env.pc.psolve(h.t + 1.0)
+        log("Simulation finished, saving LFP")
 
         if env.rank == 0:
-            print("Electrode activity: ", list(zip(lfp.t, lfp.meanlfp)))
+            out = np.column_stack([lfp.t, lfp.meanlfp])
+            self.save_file("readout.npy", out)
+
+    def readout(self):
+        return self.load_file("readout.npy")

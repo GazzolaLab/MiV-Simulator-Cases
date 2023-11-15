@@ -1,5 +1,6 @@
 PYR:
   template: PoolosPyramidalCell
+  mechanism: {}
   synapses:
     density:
       ## PYR synapse density configuration.
@@ -45,6 +46,7 @@ PYR:
 
 OLM:
   template: OLMCell
+  mechanism: {}
   synapses:
     density:
       ## OLM cell synapse density configuration
@@ -64,6 +66,7 @@ OLM:
 
 PVBC:
   template: PVBasketCell
+  mechanism: {}
   synapses:
     density:
       ## PV Basket Cell (PVBC) synapse density configuration
@@ -105,7 +108,5 @@ PVBC:
 
 STIM:
   template: VecStim
+  mechanism: {}
   synapses: {}
-  # spike train:
-  #   namespace: Input Spikes
-  #   attribute: Spike Train

@@ -148,4 +148,3 @@ with get("interface.execution.local"):
             "connections": data.output_filepath("connections"),
         }
     )
-    exit()

@@ -3,14 +3,10 @@ Sample Cases
 
 .. toctree::
    :maxdepth: 2
-   :caption: Sample Cases
-
-   MiV-Simulator-Cases/1-construction/constructing_a_network_model
-   MiV-Simulator-Cases/2-single-compartment/single_compartment
-   MiV-Simulator-Cases/3-interface-api/simulation-interface
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Configuration
+   :caption: Simulation
 
    MiV-Simulator-Cases/1-construction/configuration_description
+   MiV-Simulator-Cases/1-construction/constructing_a_network_model
+   MiV-Simulator-Cases/2-single-compartment/single_compartment
+   MiV-Simulator-Cases/3-interface-api/imperative-interface
+

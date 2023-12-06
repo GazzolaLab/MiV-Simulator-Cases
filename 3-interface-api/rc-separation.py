@@ -1,16 +1,17 @@
 # %% [markdown]
-# # Motoneurons
+
+# This example construct a microcircuit reservoir simulation that reproduces a classic seperation property experiment by [Maass et al. 2002](https://direct.mit.edu/neco/article/14/11/2531-2560/6650). This can serve as an illustration how to levarage the functional interface API.
+#
+# To run this example, make sure to change into the `3-interface-api` directory within this `MiV-Simulator-Cases` repository. Then run the entire script `rc-separation.py` or execute each individual step below.
 
 # %%
-import numpy as np
-from matplotlib import pyplot as plt
-from machinable import get
 
 
 # %% [markdown]
 # ## Create the network
 
 # %%
+from machinable import get
 from miv_simulator.utils import from_yaml
 
 synapses_config = from_yaml("simulation/config/synapses.yml")
@@ -116,6 +117,7 @@ graph.files()
 # Following Maass et al. 2002 (Figure 2).
 
 # %%
+import numpy as np
 from collections import defaultdict
 from miv_simulator import coding
 from machinable import Component
@@ -199,7 +201,13 @@ with get("interface.execution.slurm"):
         for distance in [0.1, 0.2, 0.4]
     }
 
+# %% [markdown]
+# ## Reproduce Figure 2 from Maass et al. 2002
+#
+
 # %%
+
+from matplotlib import pyplot as plt
 
 fig = plt.figure()
 for distance in [

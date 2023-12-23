@@ -161,7 +161,9 @@ class SpikeTrainPairs(Component):
         distances = [self.config.distance]
 
         g = lambda r: generate_poisson_spike_train(r, self.config.duration)
-        d = lambda a, b: spike_train_distance(a, b, duration=self.config.duration)
+        d = lambda a, b: spike_train_distance(
+            a, b, duration=self.config.duration
+        )
 
         # figure out frequencies for which distances are likely
         m = {t: (0, None) for t in distances}
@@ -253,7 +255,9 @@ for distance in [
         state_distance = np.abs(u[:, 1] - v[:, 1])
         x = u[:, 0]
         y.append(state_distance)
-    print(f"For distance {distance}, found {finished}/{total} cached experiments")
+    print(
+        f"For distance {distance}, found {finished}/{total} cached experiments"
+    )
     if finished != total:
         continue
     state_distances = np.array(y)

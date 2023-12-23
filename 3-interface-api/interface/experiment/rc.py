@@ -10,6 +10,7 @@ from miv_simulator import config
 from miv_simulator.utils import from_yaml
 from typing import Dict, Optional, Union
 import logging
+from miv_simulator.utils.neuron import configure_hoc
 
 from machinable.config import to_dict
 from machinable.utils import load_file
@@ -51,7 +52,7 @@ class Reservoir(Component):
         logging.basicConfig(level=logging.INFO)
         np.seterr(all="raise")
 
-        h = simulator.configure_hoc(mechanisms_directory=self.config.mechanisms)
+        h = configure_hoc(mechanisms_directory=self.config.mechanisms)
         env = simulator.ExecutionEnvironment(seed=self.seed)
 
         def log(m):
@@ -60,13 +61,13 @@ class Reservoir(Component):
 
         env.load_cells(
             filepath=self.config.cells,
-            cell_types=to_dict(self.config.cell_types),  # TODO: remove dict conversion
+            cell_types=to_dict(self.config.cell_types),
             templates=self.config.templates,
         )
 
         env.load_connections(
             filepath=self.config.connections,
-            cell_filepath=self.config.cells,  # TODO: decouple
+            cell_filepath=self.config.cells,
             synapses=self.config.synapses,
         )
 

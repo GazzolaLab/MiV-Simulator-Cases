@@ -1,0 +1,32 @@
+Synaptic Optimization:
+  PYR:
+    Parameter ranges:
+      Weight all:
+        PYR:
+          apical:
+            AMPA:
+              weight:
+                a: [1.0, 3.0]
+        OLM:
+          apical:
+            GABA_A:
+              weight: [0.1, 1.0]
+          soma:
+            GABA_A:
+              weight: [0.1, 1.0]
+        PVBC:
+          ais:
+            GABA_A:
+              weight: [0.1, 1.0]
+        STIM:
+          apical:
+            GABA_A:
+              weight: [0.1, 1.0]
+    Targets:
+      state:
+        v:
+          baseline: -65.0
+          threshold: -30.0
+          margin: 4.0
+      firing rate: 5.0
+      fraction active: 0.33

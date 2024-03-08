@@ -1,0 +1,17 @@
+param_config_name: "Weight all"
+objective_names:
+- PYR firing rate
+- PYR fraction active
+target_populations: ['PYR']
+kwargs:
+  config: Network_Clamp_Microcircuit_Small.yaml
+  tstop: 1250.
+  checkpoint_interval: 0.
+  v_init: -77.
+  dt: 0.025
+  cleanup: False
+  verbose: True
+  cache_queries: True
+  output_results: False
+  use_coreneuron: True
+

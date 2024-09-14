@@ -13,5 +13,5 @@ kwargs:
   verbose: True
   cache_queries: True
   output_results: False
-  use_coreneuron: True
+  use_coreneuron: False
 

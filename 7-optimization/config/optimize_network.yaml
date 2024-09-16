@@ -10,7 +10,7 @@ kwargs:
   v_init: -77.
   dt: 0.025
   cleanup: False
-  verbose: True
+  verbose: False
   cache_queries: True
   output_results: False
   use_coreneuron: False

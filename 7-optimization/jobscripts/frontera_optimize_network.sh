@@ -1,10 +1,10 @@
 #!/bin/bash
 #SBATCH -J MiV_optimize_network
 #SBATCH -o ./results/MiV_optimize_network.%j.o
-#SBATCH --nodes=1
+#SBATCH --nodes=50
 #SBATCH --ntasks-per-node=56
-#SBATCH -t 2:00:00
-#SBATCH -p development      # Queue (partition) name
+#SBATCH -t 8:00:00
+#SBATCH -p normal      # Queue (partition) name
 #SBATCH --mail-user=ivan.g.raikov@gmail.com
 #SBATCH --mail-type=END
 #SBATCH --mail-type=BEGIN
@@ -38,12 +38,12 @@ mkdir -p ${results_path}
 
 distribute.bash ${SCRATCH}/striped2/MiV/MiV_optimize_network
 
-ibrun \
+ibrun -n 2701 \
     optimize-network \
     --config-path=./config/optimize_network.yaml \
     --optimize-file-dir=$results_path \
     --nprocs-per-worker=27 \
-    --n-iter=1 \
+    --n-iter=3 \
     --num-generations=200 \
     --no_cleanup \
     --dataset_prefix="$DATA_PREFIX" \
@@ -54,5 +54,4 @@ ibrun \
     --spike_input_namespace='Input Spikes' \
     --spike_input_attr='Spike Train' \
     --max_walltime_hours=2 \
-    --io_size=1 \
-    --verbose
+    --io_size=1

@@ -4,7 +4,7 @@ objective_names:
 - PYR fraction active
 target_populations: ['PYR']
 kwargs:
-  config: Network_Clamp_Microcircuit_Small.yaml
+  config: Network_Clamp_Microcircuit_Small_Tomko_PR.yaml
   tstop: 1250.
   checkpoint_interval: 0.
   v_init: -77.

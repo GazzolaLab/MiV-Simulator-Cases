@@ -5,23 +5,26 @@ Synaptic Optimization:
         PYR:
           apical:
             AMPA:
-              weight:
-                a: [1.0, 3.0]
+              weight: [1.0, 10.0]
+            NMDA:
+              weight: [1.0, 10.0]
         OLM:
           apical:
             GABA_A:
-              weight: [0.1, 1.0]
+              weight: [0.1, 10.0]
           soma:
             GABA_A:
-              weight: [0.1, 1.0]
+              weight: [0.1, 10.0]
         PVBC:
           ais:
             GABA_A:
-              weight: [0.1, 1.0]
+              weight: [0.1, 10.0]
         STIM:
           apical:
-            GABA_A:
-              weight: [0.1, 1.0]
+            AMPA:
+              weight: [1.0, 10.0]
+            NMDA:
+              weight: [1.0, 10.0]
     Targets:
       state:
         v:

@@ -50,10 +50,9 @@ ibrun -n 28 \
     --dataset_prefix="$DATA_PREFIX" \
     --config_prefix="$CONFIG_PREFIX" \
     --results_path=$results_path \
-    --results-path=results/network \
-    --spike_input_path="$DATA_PREFIX/Microcircuit_Small/Microcircuit_Small_input_spikes.h5" \
-    --spike_input_namespace='Input Spikes' \
-    --spike_input_attr='Spike Train' \
+    --arena_id=A \
+    --stimulus_id=Diag \
+    --coordinates_namespace="Coordinates" \
     --max_walltime_hours=2 \
     --io_size=1 \
     --verbose

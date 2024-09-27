@@ -44,7 +44,8 @@ ibrun -n 28 \
     --optimize-file-dir=results/network \
     --verbose \
     --nprocs-per-worker=27 \
-    --n-iter=1 \
+    --n-epochs=3 \
+    --population-size=400 \
     --num-generations=200 \
     --no_cleanup \
     --dataset_prefix="$DATA_PREFIX" \

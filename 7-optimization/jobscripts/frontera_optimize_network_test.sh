@@ -47,6 +47,7 @@ ibrun -n 28 \
     --n-epochs=3 \
     --population-size=400 \
     --num-generations=200 \
+    --initial-method='slh' \
     --no_cleanup \
     --dataset_prefix="$DATA_PREFIX" \
     --config_prefix="$CONFIG_PREFIX" \

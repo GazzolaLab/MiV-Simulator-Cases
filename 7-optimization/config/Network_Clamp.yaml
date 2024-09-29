@@ -5,31 +5,75 @@ Synaptic Optimization:
         PYR:
           apical:
             AMPA:
-              weight: [1.0, 10.0]
-            NMDA:
-              weight: [1.0, 10.0]
-        OLM:
-          apical:
-            GABA_A:
               weight: [0.1, 10.0]
+            NMDA:
+              weight: [0.1, 10.0]
+        OLM:
+          !!python/tuple [apical, basal]:
+            GABA_A:
+              weight: [0.1, 50.0]
           soma:
             GABA_A:
-              weight: [0.1, 10.0]
+              weight: [0.1, 50.0]
         PVBC:
-          ais:
+          !!python/tuple [apical, basal, soma, ais]:
             GABA_A:
               weight: [0.1, 10.0]
         STIM:
           apical:
             AMPA:
-              weight: [1.0, 10.0]
+              weight: [0.1, 10.0]
             NMDA:
-              weight: [1.0, 10.0]
+              weight: [0.1, 10.0]
     Targets:
       state:
         v:
           baseline: -65.0
           threshold: -30.0
           margin: 4.0
-      firing rate: 5.0
-      fraction active: 0.33
+      firing rate: 2.0
+      fraction active: 0.4
+  PVBC:
+    Targets:
+      state:
+        v:
+          threshold: -43.1
+          margin: 2.0
+      firing rate: 25.0
+      fraction active: 0.9
+    Parameter ranges:
+      Weight all:
+        PYR:
+          !!python/tuple [apical, basal, soma]:
+            AMPA:
+              weight: [0.1, 10.0]
+        STIM:
+          !!python/tuple [apical, basal, soma]:
+            AMPA:
+              weight: [0.1, 10.0]
+        PVBC:
+          !!python/tuple [apical, basal, soma]:
+            GABA_A:
+              weight: [0.1, 20.0]
+        OLM:
+          apical:
+            GABA_A:
+              weight: [0.1, 20.0]
+  OLM:
+    Targets:
+      state:
+        v:
+          threshold: -43.1
+          margin: 2.0
+      firing rate: 10.0
+      fraction active: 0.9
+    Parameter ranges:
+      Weight all:
+        PYR:
+          !!python/tuple [apical, basal, soma]:
+            AMPA:
+              weight: [0.1, 10.0]
+        PVBC:
+          !!python/tuple [apical, basal, soma]:
+            GABA_A:
+              weight: [0.1, 20.0]

@@ -2,7 +2,11 @@ param_config_name: "Weight all"
 objective_names:
 - PYR firing rate
 - PYR fraction active
-target_populations: ['PYR']
+- PVBC firing rate
+- PVBC fraction active
+- OLM firing rate
+- OLM fraction active
+target_populations: ['PYR', 'PVBC', 'OLM']
 kwargs:
   config: Network_Clamp_Microcircuit_Small_Tomko_PR.yaml
   tstop: 1250.

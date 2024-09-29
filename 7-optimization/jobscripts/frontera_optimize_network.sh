@@ -31,22 +31,22 @@ export CDTools=/home1/apps/CDTools/1.2
 
 export PATH=${CDTools}/bin:$PATH
 
-results_path=$SCRATCH/results/optimize_network_6662640
+results_path=$SCRATCH/results/optimize_network_$SLURM_JOB_ID
 export results_path
 
 mkdir -p ${results_path}
 
 distribute.bash ${SCRATCH}/striped2/MiV/MiV_optimize_network
 
-ibrun -n 2161 \
+ibrun -rr -n 2161 \
     optimize-network \
     --config-path=./config/optimize_network.yaml \
     --optimize-file-dir=$results_path \
-    --optimize-file-name=dmosopt.optimize_network_20240926_2021.h5 \
     --nprocs-per-worker=27 \
-    --n-epochs=3 \
+    --n-epochs=4 \
     --population-size=400 \
     --num-generations=200 \
+    --initial-method=slh \
     --no_cleanup \
     --dataset_prefix="$DATA_PREFIX" \
     --config_prefix="$CONFIG_PREFIX" \

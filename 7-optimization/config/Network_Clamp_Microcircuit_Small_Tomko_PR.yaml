@@ -14,18 +14,17 @@ Stimulus: !include Input_Configuration.yaml
 Analysis: !include Analysis_Configuration.yaml
 Cell Types:
   PYR:
-    template: TomkoPyramidalCell
+    template class: templates.PyramidalCellBilash.PyramidalCell
+    mechanism file: CA1_PYR_Bilash.yaml
     synapses:
       density: !include PYR_synapse_density.yaml
   OLM:
-    template: PRN_nrn
-    template file: PRN_nrn.hoc
+    template class: templates.PRN_neuron.PRN
     mechanism file: CA1_OLM_PR_config.yaml
     synapses:
       density: !include OLM_synapse_density.yaml
   PVBC:
-    template: PRN_nrn
-    template file: PRN_nrn.hoc
+    template class: templates.PRN_neuron.PRN
     mechanism file: CA1_PVBC_PR_config.yaml
     synapses:
       density: !include PVBC_synapse_density.yaml

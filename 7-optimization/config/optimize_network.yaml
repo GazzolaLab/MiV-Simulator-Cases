@@ -1,11 +1,16 @@
 param_config_name: "Weight all"
+temporal_resolution: 50. # ms
 objective_names:
 - PYR firing rate
-- PYR fraction active
+- PYR mean fraction active per time bin
+- PYR std fraction active per time bin
 - PVBC firing rate
 - PVBC fraction active
+- PVBC mean fraction active per time bin
+- PVBC std fraction active per time bin
 - OLM firing rate
-- OLM fraction active
+- OLM mean fraction active per time bin
+- OLM std fraction active per time bin
 target_populations: ['PYR', 'PVBC', 'OLM']
 kwargs:
   config: Network_Clamp_Microcircuit_Small_Tomko_PR.yaml

@@ -32,7 +32,8 @@ Synaptic Optimization:
           threshold: -30.0
           margin: 4.0
       firing rate: 2.0
-      fraction active: 0.4
+      mean fraction active per time bin: 0.4
+      std fraction active per time bin: 0.1
   PVBC:
     Targets:
       state:
@@ -40,7 +41,8 @@ Synaptic Optimization:
           threshold: -43.1
           margin: 2.0
       firing rate: 25.0
-      fraction active: 0.9
+      mean fraction active per time bin: 0.9
+      std fraction active per time bin: 0.1
     Parameter ranges:
       Weight all:
         PYR:
@@ -66,7 +68,8 @@ Synaptic Optimization:
           threshold: -43.1
           margin: 2.0
       firing rate: 10.0
-      fraction active: 0.9
+      mean fraction active per time bin: 0.9
+      std fraction active per time bin: 0.1
     Parameter ranges:
       Weight all:
         PYR:

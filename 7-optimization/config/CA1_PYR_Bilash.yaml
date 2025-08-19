@@ -1,0 +1,156 @@
+celsius: 35.0
+soma:
+  gbar_na: 3.5e-2  # S/cm2
+  gkdr: 1.4e-3  # S/cm2
+  gka_prox: 7.5e-3  # S/cm2
+  gbar_km: 1.66e-2  # S/cm2
+  gcal: 7e-3  # S/cm2
+  gcar: 3e-2  # S/cm2
+  gcat: 5e-5  # S/cm2
+  gkca: 9.075e-2  # S/cm2
+  gkahp: 5e-3  # S/cm2
+  g_pas: 5e-8  # S/cm2
+  e_pas: -70 # mV
+  gh: 1.5e-5  # S/cm2
+  eh: -30 # mV
+  cm: 1.0  # µF/cm2
+  Ra: 300  # Ohm cm
+  ic: 0.004
+        
+hillock:
+  gbar_na: 0.5e0
+  gkdr: 0.6e-1
+  gbar_km: 3e-6
+  g_pas: 5e-8
+  e_pas: -70 # mV
+  cm: 1.0
+  Ra: 300
+  ic: -0.001
+      
+ais:
+  gbar_na: 1.5e0
+  gkdr: 1e-1
+  gbar_km: 3e-6
+  g_pas: 5e-8
+  e_pas: -70 # mV
+  cm: 1.0
+  Ra: 300
+  ic: -0.001
+
+axon:
+  gbar_na: 1.0e0
+  gkdr: 0.6e-1
+  gbar_km: 3e-6
+  g_pas: 5e-8
+  e_pas: -70 # mV
+  cm: 1.0
+  Ra: 300
+  ic: -0.001
+
+# Apical trunk
+radTprox:
+  g_pas: 5.26e-8
+  e_pas: -65 # mV
+  gbar_na: 1.4e-2
+  ar2_na: 0.9
+  gkdr: 1.74e-3
+  gka: 1.8e-3
+  gbar_km: 6e-4
+  gh: 1.8e-5
+  eh: -30 # mV
+  gcal: 3.16e-6
+  gcar: 3e-4
+  gcat: 4e-4
+  gkca: 6.6e-3
+  gkahp: 5e-3
+  cm: 2.2
+  Ra: 285
+  ic: -0.0016
+        
+radTmed:
+  g_pas: 6.67e-8
+  e_pas: -65 # mV
+  gbar_na: 1.4e-2
+  ar2_na: 0.9
+  gkdr: 1.73e-3
+  gka: 2.78e-2
+  gbar_km: 6e-4
+  gh: 6e-5
+  eh: -30 # mV
+  gcal: 6.32e-6
+  gcar: 3e-4
+  gcat: 4e-4
+  gkca: 6.6e-3
+  gkahp: 5e-3
+  cm: 2.2
+  Ra: 270
+  ic: -0.0022
+      
+radTdist:
+  g_pas: 2.85e-7
+  e_pas: -65 # mV
+  gbar_na: 1.4e-2
+  ar2_na: 0.9
+  gkdr: 1.73e-3
+  gka: 4.86e-2
+  gbar_km: 6e-4
+  gh: 9e-5
+  eh: -30 # mV
+  gcal: 2.53e-5
+  gcar: 3e-4
+  gcat: 4e-4
+  gkca: 4.12e-3
+  gkahp: 5e-5
+  cm: 2.2
+  Ra: 216
+  ic: -0.003
+      
+apical_tuft:
+  g_pas: 8.3e-7
+  e_pas: -63 # mV
+  gbar_na: 1.5e-3
+  ar2_na: 0.95
+  gkdr: 1.9e-4
+  gka_dist: 4.86e-2
+  gbar_km: 1.2e-3
+  gh: 1.2e-4
+  eh: -30 # mV
+  gcal: 3.16e-6
+  gkca: 4.125e-3
+  gkahp: 5e-5
+  cm: 3.0
+  Ra: 150
+  ic: -0.002
+      
+apical_oblique:
+  g_pas: 8.3e-7
+  e_pas: -63 # mV
+  gbar_na: 8.4e-3
+  ar2_na: 1.0
+  gkdr: 1e-3
+  gka_dist: 4.17e-2
+  gbar_km: 1.2e-3
+  gh: 6e-5
+  eh: -30 # mV
+  gcal: 1.26e-5
+  gkca: 4.125e-3
+  gkahp: 5e-5
+  cm: 3.0
+  Ra: 150
+  ic: -0.0024
+  
+basal:
+  g_pas: 5.55e-7
+  e_pas: -65 # mV
+  gbar_na: 7e-3
+  ar2_na: 1.0
+  gkdr: 8.6e-4
+  gka_prox: 7.5e-3
+  gbar_km: 6e-4
+  gh: 1.5e-5
+  eh: -30 # mV
+  gkca: 1.65e-2
+  gkahp: 5e-3
+  cm: 3.0
+  Ra: 150
+  ic: -0.002

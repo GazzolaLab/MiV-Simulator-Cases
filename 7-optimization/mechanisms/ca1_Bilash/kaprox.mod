@@ -35,7 +35,7 @@ NEURON {
 	SUFFIX kap
 	USEION k READ ek WRITE ik
         RANGE gkabar,gka
-        GLOBAL ninf,linf,taul,taun,lmin
+        RANGE ninf,linf,taul,taun,lmin
 }
 
 STATE {

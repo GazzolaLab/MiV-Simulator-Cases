@@ -13,7 +13,7 @@ objective_names:
 - OLM std fraction active per time bin
 target_populations: ['PYR', 'PVBC', 'OLM']
 kwargs:
-  config: Network_Clamp_Microcircuit_Small_Tomko_PR.yaml
+  config: Network_Clamp_Microcircuit_Small_Bilash_PR.yaml
   tstop: 1250.
   checkpoint_interval: 0.
   v_init: -77.

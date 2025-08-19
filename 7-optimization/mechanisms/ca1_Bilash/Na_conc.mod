@@ -3,7 +3,7 @@ COMMENT
 ENDCOMMENT
 
 NEURON {
-        SUFFIX Na_conc_PR
+        SUFFIX Na_conc
         USEION na READ ina, nao, nai WRITE nai, nao
         RANGE d, beta, nai0, nao0
 }

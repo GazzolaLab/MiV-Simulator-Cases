@@ -1,17 +1,54 @@
 param_config_name: "Weight all"
 temporal_resolution: 50. # ms
-objective_names:
-- PYR firing rate
-- PYR mean fraction active per time bin
-- PYR std fraction active per time bin
-- PVBC firing rate
-- PVBC fraction active
-- PVBC mean fraction active per time bin
-- PVBC std fraction active per time bin
-- OLM firing rate
-- OLM mean fraction active per time bin
-- OLM std fraction active per time bin
-target_populations: ['PYR', 'PVBC', 'OLM']
+Network Optimization:
+  Features:
+    - class: miv_simulator.network_objectives.MeanFiringRateFeature
+    - class: miv_simulator.network_objectives.FractionActiveFeature
+    - class: miv_simulator.network_objectives.FiringRateStabilityFeature
+      kwargs:
+        temporal_resolution: 2.0
+  Objectives:
+    - class: miv_simulator.network_objectives.TargetRateObjective
+      name: PYR firing rate
+      pop_name: PYR
+      kwargs:
+        target_rate: 2.0
+    - class: miv_simulator.network_objectives.TargetMeanFractionActiveObjective
+      name: PYR mean fraction active per time bin
+      pop_name: PYR
+      kwargs:
+        target_value: 0.4
+    - class: miv_simulator.network_objectives.TargetRateObjective
+      name: PVBC firing rate
+      pop_name: PVBC
+      kwargs:
+        target_rate: 25.0
+    - class: miv_simulator.network_objectives.TargetMeanFractionActiveObjective
+      name: PVBC mean fraction active per time bin
+      pop_name: PVBC
+      kwargs:
+        target_value: 0.9
+    - class: miv_simulator.network_objectives.TargetMeanFractionActiveObjective
+      name: OLM mean fraction active per time bin
+      pop_name: OLM
+      kwargs:
+        target_value: 0.9
+  Constraints:
+    - class: miv_simulator.network_objectives.FiringRateBoundConstraint
+      name: PYR positive rate
+      pop_name: PYR
+      kwargs:
+        min_rate: 0.0
+    - class: miv_simulator.network_objectives.FiringRateBoundConstraint
+      name: PVBC positive rate
+      pop_name: PVBC
+      kwargs:
+        min_rate: 0.0
+    - class: miv_simulator.network_objectives.FiringRateBoundConstraint
+      name: OLM positive rate
+      pop_name: OLM
+      kwargs:
+        min_rate: 0.0
 kwargs:
   config: Network_Clamp_Microcircuit_Small_Bilash_PR.yaml
   tstop: 1250.
@@ -23,4 +60,3 @@ kwargs:
   cache_queries: True
   output_results: False
   use_coreneuron: False
-

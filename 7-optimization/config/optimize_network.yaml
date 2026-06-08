@@ -38,17 +38,17 @@ Network Optimization:
       name: PYR positive rate
       pop_name: PYR
       kwargs:
-        min_rate: 0.0
+        min_rate: 0.1
     - class: miv_simulator.network_objectives.FiringRateBoundConstraint
       name: PVBC positive rate
       pop_name: PVBC
       kwargs:
-        min_rate: 0.0
+        min_rate: 10.0
     - class: miv_simulator.network_objectives.FiringRateBoundConstraint
       name: OLM positive rate
       pop_name: OLM
       kwargs:
-        min_rate: 0.0
+        min_rate: 0.5
 kwargs:
   config: Network_Clamp_Microcircuit_Small_Bilash_PR.yaml
   tstop: 1250.

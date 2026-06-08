@@ -49,6 +49,22 @@ Network Optimization:
       pop_name: OLM
       kwargs:
         min_rate: 0.5
+    - class: miv_simulator.network_objectives.SteadyFiringConstraint
+      name: PYR steady firing
+      pop_name: PYR
+      kwargs:
+        max_cv: 0.5
+    - class: miv_simulator.network_objectives.SteadyFiringConstraint
+      name: OLM steady firing
+      pop_name: OLM
+      kwargs:
+        max_cv: 0.5
+    - class: miv_simulator.network_objectives.SteadyFiringConstraint
+      name: PVBC steady firing
+      pop_name: PVBC
+      kwargs:
+        max_cv: 0.5
+        
 kwargs:
   config: Network_Clamp_Microcircuit_Small_Bilash_PR.yaml
   tstop: 1250.

@@ -1,78 +1,226 @@
-param_config_name: "Weight all"
-temporal_resolution: 50. # ms
+param_config_name: Weight all
+temporal_resolution: 50.0
+t_start: 3000.0
+Surrogate:
+  custom_training: dmosopt.model_transformer.joint
+  kwargs:
+    mode: c+o
+    objectives: true
+    constraints: false
+    sensitivity: true
+    feasibility_solving: true
+    feasibility_targets: objective constraint
+    feasibility_after: 10
+    feasibility_iterations: 1000
+    feasibility_max_move: 0.1
+    feasibility_constraint_weights: {NGFC synchrony bound: 4, AAC synchrony bound: 4,
+      IVY synchrony bound: 4}
 Network Optimization:
   Features:
-    - class: miv_simulator.network_objectives.MeanFiringRateFeature
-    - class: miv_simulator.network_objectives.FractionActiveFeature
-    - class: miv_simulator.network_objectives.FiringRateStabilityFeature
-      kwargs:
-        temporal_resolution: 2.0
+  - {class: miv_simulator.network_objectives.MeanFiringRateFeature}
+  - {class: miv_simulator.network_objectives.PopulationFiringRateFeature}
+  - {class: miv_simulator.network_objectives.FractionActiveFeature}
+  - class: miv_simulator.network_objectives.FiringRateStabilityFeature
+    kwargs:
+      temporal_resolution: 2.0
+      active_threshold: {AAC: 9.0, BS: 9.0, CCKBC: 4.5, IS1: 8.5, IS2: 8.5, IS3: 8.5,
+        IVY: 1.5, NGFC: 3.7, OLM: 6.5, PVBC: 9.0, PYR: 0.51, SCA: 4.5}
+  - class: miv_simulator.network_objectives.ParticipationRatioFeature
+    kwargs: {bin_size: 50.0}
   Objectives:
-    - class: miv_simulator.network_objectives.TargetRateObjective
-      name: PYR firing rate
-      pop_name: PYR
-      kwargs:
-        target_rate: 2.0
-    - class: miv_simulator.network_objectives.TargetMeanFractionActiveObjective
-      name: PYR mean fraction active per time bin
-      pop_name: PYR
-      kwargs:
-        target_value: 0.4
-    - class: miv_simulator.network_objectives.TargetRateObjective
-      name: PVBC firing rate
-      pop_name: PVBC
-      kwargs:
-        target_rate: 25.0
-    - class: miv_simulator.network_objectives.TargetMeanFractionActiveObjective
-      name: PVBC mean fraction active per time bin
-      pop_name: PVBC
-      kwargs:
-        target_value: 0.9
-    - class: miv_simulator.network_objectives.TargetMeanFractionActiveObjective
-      name: OLM mean fraction active per time bin
-      pop_name: OLM
-      kwargs:
-        target_value: 0.9
+  - class: miv_simulator.network_objectives.TargetLogRateObjective
+    name: PYR population rate
+    pop_name: PYR
+    kwargs: {target_rate: 1.02}
+  - class: miv_simulator.network_objectives.TargetLogRateObjective
+    name: IVY population rate
+    pop_name: IVY
+    kwargs: {target_rate: 3.0}
+  - class: miv_simulator.network_objectives.TargetLogRateObjective
+    name: PVBC population rate
+    pop_name: PVBC
+    kwargs: {target_rate: 18.0}
   Constraints:
-    - class: miv_simulator.network_objectives.FiringRateBoundConstraint
-      name: PYR positive rate
-      pop_name: PYR
-      kwargs:
-        min_rate: 0.1
-    - class: miv_simulator.network_objectives.FiringRateBoundConstraint
-      name: PVBC positive rate
-      pop_name: PVBC
-      kwargs:
-        min_rate: 10.0
-    - class: miv_simulator.network_objectives.FiringRateBoundConstraint
-      name: OLM positive rate
-      pop_name: OLM
-      kwargs:
-        min_rate: 0.5
-    - class: miv_simulator.network_objectives.SteadyFiringConstraint
-      name: PYR steady firing
-      pop_name: PYR
-      kwargs:
-        max_cv: 0.5
-    - class: miv_simulator.network_objectives.SteadyFiringConstraint
-      name: OLM steady firing
-      pop_name: OLM
-      kwargs:
-        max_cv: 0.5
-    - class: miv_simulator.network_objectives.SteadyFiringConstraint
-      name: PVBC steady firing
-      pop_name: PVBC
-      kwargs:
-        max_cv: 0.5
-        
-kwargs:
-  config: Network_Clamp_Microcircuit_Small_Bilash_PR.yaml
-  tstop: 1250.
-  checkpoint_interval: 0.
-  v_init: -77.
-  dt: 0.025
-  cleanup: False
-  verbose: False
-  cache_queries: True
-  output_results: False
-  use_coreneuron: False
+  - class: miv_simulator.network_objectives.FiringRateBoundConstraint
+    name: AAC rate band
+    pop_name: AAC
+    kwargs: {feature: population_rate, min_rate: 4.5, max_rate: 72.0}
+  - class: miv_simulator.network_objectives.ActiveFractionBoundConstraint
+    name: AAC active per bin band
+    pop_name: AAC
+    kwargs: {feature: mean_fraction_active_per_bin, min_fraction: 0.46, max_fraction: 1.0}
+  - class: miv_simulator.network_objectives.SteadyFiringConstraint
+    name: AAC steady firing
+    pop_name: AAC
+    kwargs: {max_cv: 0.5}
+  - class: miv_simulator.network_objectives.FiringRateBoundConstraint
+    name: BS rate band
+    pop_name: BS
+    kwargs: {feature: population_rate, min_rate: 4.5, max_rate: 72.0}
+  - class: miv_simulator.network_objectives.ActiveFractionBoundConstraint
+    name: BS active per bin band
+    pop_name: BS
+    kwargs: {feature: mean_fraction_active_per_bin, min_fraction: 0.46, max_fraction: 1.0}
+  - class: miv_simulator.network_objectives.SteadyFiringConstraint
+    name: BS steady firing
+    pop_name: BS
+    kwargs: {max_cv: 0.5}
+  - class: miv_simulator.network_objectives.FiringRateBoundConstraint
+    name: CCKBC rate band
+    pop_name: CCKBC
+    kwargs: {feature: population_rate, min_rate: 2.25, max_rate: 36.0}
+  - class: miv_simulator.network_objectives.ActiveFractionBoundConstraint
+    name: CCKBC active per bin band
+    pop_name: CCKBC
+    kwargs: {feature: mean_fraction_active_per_bin, min_fraction: 0.45, max_fraction: 1.0}
+  - class: miv_simulator.network_objectives.SteadyFiringConstraint
+    name: CCKBC steady firing
+    pop_name: CCKBC
+    kwargs: {max_cv: 0.5}
+  - class: miv_simulator.network_objectives.FiringRateBoundConstraint
+    name: IS1 rate band
+    pop_name: IS1
+    kwargs: {feature: population_rate, min_rate: 4.25, max_rate: 68.0}
+  - class: miv_simulator.network_objectives.SteadyFiringConstraint
+    name: IS1 steady firing
+    pop_name: IS1
+    kwargs: {max_cv: 0.9457}
+  - class: miv_simulator.network_objectives.FiringRateBoundConstraint
+    name: IS2 rate band
+    pop_name: IS2
+    kwargs: {feature: population_rate, min_rate: 4.25, max_rate: 68.0}
+  - class: miv_simulator.network_objectives.SteadyFiringConstraint
+    name: IS2 steady firing
+    pop_name: IS2
+    kwargs: {max_cv: 0.9302}
+  - class: miv_simulator.network_objectives.FiringRateBoundConstraint
+    name: IS3 rate band
+    pop_name: IS3
+    kwargs: {feature: population_rate, min_rate: 4.25, max_rate: 68.0}
+  - class: miv_simulator.network_objectives.SteadyFiringConstraint
+    name: IS3 steady firing
+    pop_name: IS3
+    kwargs: {max_cv: 0.9349}
+  - class: miv_simulator.network_objectives.FiringRateBoundConstraint
+    name: IVY rate band
+    pop_name: IVY
+    kwargs: {feature: population_rate, min_rate: 0.75, max_rate: 12.0}
+  - class: miv_simulator.network_objectives.ActiveFractionBoundConstraint
+    name: IVY active per bin band
+    pop_name: IVY
+    kwargs: {feature: mean_fraction_active_per_bin, min_fraction: 0.49, max_fraction: 1.0}
+  - class: miv_simulator.network_objectives.SteadyFiringConstraint
+    name: IVY steady firing
+    pop_name: IVY
+    kwargs: {max_cv: 0.5}
+  - class: miv_simulator.network_objectives.FiringRateBoundConstraint
+    name: NGFC rate band
+    pop_name: NGFC
+    kwargs: {feature: population_rate, min_rate: 1.85, max_rate: 29.6}
+  - class: miv_simulator.network_objectives.ActiveFractionBoundConstraint
+    name: NGFC active per bin band
+    pop_name: NGFC
+    kwargs: {feature: mean_fraction_active_per_bin, min_fraction: 0.475, max_fraction: 1.0}
+  - class: miv_simulator.network_objectives.SteadyFiringConstraint
+    name: NGFC steady firing
+    pop_name: NGFC
+    kwargs: {max_cv: 0.5}
+  - class: miv_simulator.network_objectives.FiringRateBoundConstraint
+    name: OLM rate band
+    pop_name: OLM
+    kwargs: {feature: population_rate, min_rate: 3.25, max_rate: 52.0}
+  - class: miv_simulator.network_objectives.ActiveFractionBoundConstraint
+    name: OLM active per bin band
+    pop_name: OLM
+    kwargs: {feature: mean_fraction_active_per_bin, min_fraction: 0.49, max_fraction: 1.0}
+  - class: miv_simulator.network_objectives.SteadyFiringConstraint
+    name: OLM steady firing
+    pop_name: OLM
+    kwargs: {max_cv: 0.5}
+  - class: miv_simulator.network_objectives.FiringRateBoundConstraint
+    name: PVBC rate band
+    pop_name: PVBC
+    kwargs: {feature: population_rate, min_rate: 4.5, max_rate: 72.0}
+  - class: miv_simulator.network_objectives.ActiveFractionBoundConstraint
+    name: PVBC active per bin band
+    pop_name: PVBC
+    kwargs: {feature: mean_fraction_active_per_bin, min_fraction: 0.46, max_fraction: 1.0}
+  - class: miv_simulator.network_objectives.SteadyFiringConstraint
+    name: PVBC steady firing
+    pop_name: PVBC
+    kwargs: {max_cv: 0.5}
+  - class: miv_simulator.network_objectives.FiringRateBoundConstraint
+    name: PYR rate band
+    pop_name: PYR
+    kwargs: {feature: population_rate, min_rate: 0.255, max_rate: 4.08}
+  - class: miv_simulator.network_objectives.ActiveFractionBoundConstraint
+    name: PYR active per bin band
+    pop_name: PYR
+    kwargs: {feature: mean_fraction_active_per_bin, min_fraction: 0.265, max_fraction: 1.0}
+  - class: miv_simulator.network_objectives.SteadyFiringConstraint
+    name: PYR steady firing
+    pop_name: PYR
+    kwargs: {max_cv: 0.5}
+  - class: miv_simulator.network_objectives.FiringRateBoundConstraint
+    name: SCA rate band
+    pop_name: SCA
+    kwargs: {feature: population_rate, min_rate: 2.25, max_rate: 36.0}
+  - class: miv_simulator.network_objectives.ActiveFractionBoundConstraint
+    name: SCA active per bin band
+    pop_name: SCA
+    kwargs: {feature: mean_fraction_active_per_bin, min_fraction: 0.46, max_fraction: 1.0}
+  - class: miv_simulator.network_objectives.SteadyFiringConstraint
+    name: SCA steady firing
+    pop_name: SCA
+    kwargs: {max_cv: 0.5}
+  - class: miv_simulator.network_objectives.SynchronyBoundConstraint
+    name: AAC synchrony bound
+    pop_name: AAC
+    kwargs: {max_ratio: 4.2224}
+  - class: miv_simulator.network_objectives.SynchronyBoundConstraint
+    name: BS synchrony bound
+    pop_name: BS
+    kwargs: {max_ratio: 4.1232}
+  - class: miv_simulator.network_objectives.SynchronyBoundConstraint
+    name: CCKBC synchrony bound
+    pop_name: CCKBC
+    kwargs: {max_ratio: 4.3248}
+  - class: miv_simulator.network_objectives.SynchronyBoundConstraint
+    name: IS1 synchrony bound
+    pop_name: IS1
+    kwargs: {max_ratio: 5.1695}
+  - class: miv_simulator.network_objectives.SynchronyBoundConstraint
+    name: IS2 synchrony bound
+    pop_name: IS2
+    kwargs: {max_ratio: 5.5069}
+  - class: miv_simulator.network_objectives.SynchronyBoundConstraint
+    name: IS3 synchrony bound
+    pop_name: IS3
+    kwargs: {max_ratio: 5.9041}
+  - class: miv_simulator.network_objectives.SynchronyBoundConstraint
+    name: IVY synchrony bound
+    pop_name: IVY
+    kwargs: {max_ratio: 4.6214}
+  - class: miv_simulator.network_objectives.SynchronyBoundConstraint
+    name: NGFC synchrony bound
+    pop_name: NGFC
+    kwargs: {max_ratio: 4.8498}
+  - class: miv_simulator.network_objectives.SynchronyBoundConstraint
+    name: OLM synchrony bound
+    pop_name: OLM
+    kwargs: {max_ratio: 4.3349}
+  - class: miv_simulator.network_objectives.SynchronyBoundConstraint
+    name: PVBC synchrony bound
+    pop_name: PVBC
+    kwargs: {max_ratio: 4.0909}
+  - class: miv_simulator.network_objectives.SynchronyBoundConstraint
+    name: PYR synchrony bound
+    pop_name: PYR
+    kwargs: {max_ratio: 2.8304}
+  - class: miv_simulator.network_objectives.SynchronyBoundConstraint
+    name: SCA synchrony bound
+    pop_name: SCA
+    kwargs: {max_ratio: 5.9759}
+kwargs: {config: Slice_Joint_Surrogate_Oct_2026.yaml, tstop: 9750.0, checkpoint_interval: 0.0,
+  v_init: -77.0, dt: 0.025, cleanup: false, verbose: false, cache_queries: true, output_results: false,
+  use_coreneuron: false, use_cell_attr_gen: true, cell_attr_gen_cache_size: 4, microcircuit_inputs: true}
